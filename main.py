@@ -1,4 +1,4 @@
-# import time
+import time
 # import numpy as np
 # import cv2
 # from imutils.video import FPS
@@ -8,21 +8,32 @@ from utils.FireHandle import FireHandle
 from utils.filters import filter_jit
 from RGBDetector import RGBDetector
 
-
+'''
+%lprun -f RGBDetector.detect RGBDetector(reader_fire, VideoWriterAdapter(reader_fire), \
+                                         FireHandle(filter_jit, 0.00000001), 0.6).detect()
+'''
 def main():
-    # reader_non_fire = CachedVideoCaptureAdapter("fire.mp4")
+    # Environment setup
+    frame_info = {"start": -1, "end": -1, "count": -1}
+    time_info = {"start": -1, "end": -1, "duration": -1}
     reader_fire = CachedVideoCaptureAdapter("fire.mp4")
-
-    detector1 = RGBDetector(reader_fire, VideoWriterAdapter(reader_fire), \
-                             FireHandle(filter_jit, 0.01), 0.9)
-    render_ret = detector1.render()
-
-    detector2 = RGBDetector(reader_fire, VideoWriterAdapter(reader_fire), \
-                             FireHandle(filter_jit, 0.00000001), 0.6)
-    detect_ret = detector2.detect()
-
-    print("render_ret: ", render_ret)
-    print("detect_ret: ", detect_ret)
+    detector = RGBDetector(reader_fire, VideoWriterAdapter(reader_fire),
+                           FireHandle(filter_jit, 0.00000001), 0.6)
+    # Detection starting
+    frame_info["start"] = 0
+    time_info["start"] = time.time()
+    frame_info["end"] = detector.detect() # TODO: remove this line
+    # frame_info["end"] = detector.detect(frame_info["start"]) # TODO: un-comment this line
+    time_info["end"] = time.time()
+    time_info["duration"] = time_info["end"] - time_info["start"]
+    detected = frame_info["end"] is not None
+    fps = (frame_info["end"] - frame_info["start"]) / time_info["duration"] if detected else -1
+    # Showing stats
+    print("Detection information: (-1 := invalid)")
+    print(f">Detected fire: {detected}")
+    print(f">Detection taken: {time_info['duration']:.2f} sec")
+    print(f">Frame count: {(frame_info['end'] - frame_info['start']) if detected else -1} frames")
+    print(f">FPS: {fps:.2f}")
 
     # # video capture setup
     # cap = cv2.VideoCapture("fire.mp4")

@@ -4,7 +4,7 @@ import cv2 as cv
 class VideoWriterAdapter:
     def __init__(self, reader):
         self.write = cv.VideoWriter(reader.dir.replace(".mp4", "out.mp4"),
-                                    cv.VideoWriter_fourcc(*'MP4V'),
+                                    cv.VideoWriter_fourcc(*'mp4v'),
                                     reader.fps(), reader.shape())
 
     def __call__(self, frame):

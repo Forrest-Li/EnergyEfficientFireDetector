@@ -1,3 +1,4 @@
+import numpy as np
 import cv2 as cv
 
 
@@ -11,6 +12,12 @@ class RGBDetector:
         assert thres >= 0. and thres <= 1.
         self.thres = int(thres * len(self.frame_window))
         print(f"source fps: {self.read.fps()}, threshold: {self.thres} / {len(self.frame_window)}")
+
+    def warmup(self):
+        frames = np.ones((50, 720, 1080, 3), dtype=np.uint8)
+        for frame in frames:
+            fgMask = self.backSub.apply(frame)
+            has_fire = self.handle.has_fire(frame, fgMask)
 
     def detect(self) -> int:
         fid = 0

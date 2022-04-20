@@ -17,10 +17,11 @@ def main():
     frame_info = {"start": -1, "end": -1, "count": -1}
     time_info = {"start": -1, "end": -1, "duration": -1}
     fps = -1
-    reader_fire = CachedVideoCaptureAdapter("non_sample3.mp4")
+    reader_fire = CachedVideoCaptureAdapter("fire.mp4")
     detector = RGBDetector(reader_fire, VideoWriterAdapter(reader_fire),
                            FireHandle(filter_jit, 0.00000001), 0.6)
     # Detection starting
+    detector.warmup()
     frame_info["start"] = 0
     time_info["start"] = time.time()
     frame_info["end"] = detector.detect() # TODO: remove this line

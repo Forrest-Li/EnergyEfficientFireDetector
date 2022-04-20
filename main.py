@@ -16,7 +16,7 @@ def main():
     # Environment setup
     frame_info = {"start": -1, "end": -1, "count": -1}
     time_info = {"start": -1, "end": -1, "duration": -1}
-    reader_fire = CachedVideoCaptureAdapter("fire.mp4")
+    reader_fire = CachedVideoCaptureAdapter("non_sample3.mp4")
     detector = RGBDetector(reader_fire, VideoWriterAdapter(reader_fire),
                            FireHandle(filter_jit, 0.00000001), 0.6)
     # Detection starting
@@ -27,7 +27,8 @@ def main():
     time_info["end"] = time.time()
     time_info["duration"] = time_info["end"] - time_info["start"]
     detected = frame_info["end"] is not None
-    fps = (frame_info["end"] - frame_info["start"]) / time_info["duration"] if detected else -1
+    frame_info["count"] = frame_info["end"] - frame_info["start"]
+    fps = (frame_info["count"]) / time_info["duration"] if detected else -1
     # Showing stats
     print("Detection information: (-1 := invalid)")
     print(f">Detected fire: {detected}")

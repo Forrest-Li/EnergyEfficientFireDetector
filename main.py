@@ -1,29 +1,34 @@
 import time
+from YOLODetector import YOLODetector
 # import numpy as np
 # import cv2
 # from imutils.video import FPS
 # from tqdm import tqdm
-from utils.video_adapters import CachedVideoCaptureAdapter, VideoWriterAdapter
-from utils.FireHandle import FireHandle
-from utils.filters import filter_jit
+from my_utils.video_adapters import CachedVideoCaptureAdapter, VideoWriterAdapter
+from my_utils.FireHandle import FireHandle
+from my_utils.filters import filter_jit
+from my_utils.fire_policy import FirePolicy
 from RGBDetector import RGBDetector
 
 '''
 %lprun -f RGBDetector.detect RGBDetector(reader_fire, VideoWriterAdapter(reader_fire), \
                                          FireHandle(filter_jit, 0.00000001), 0.6).detect()
 '''
+
+
 def main():
     # Environment setup
     frame_info = {"start": -1, "end": -1, "count": -1}
     time_info = {"start": -1, "end": -1, "duration": -1}
     fps = -1
-    reader_fire = CachedVideoCaptureAdapter("non_sample3.mp4")
-    detector = RGBDetector(reader_fire, VideoWriterAdapter(reader_fire),
-                           FireHandle(filter_jit, 0.00000001), 0.6)
+    reader_fire = CachedVideoCaptureAdapter("fire.mp4")
+    # detector = RGBDetector(FireHandle(filter_jit, 0.01), FirePolicy.make_policy(1, 0.6))
+    detector = YOLODetector(
+        "./weights/best.pt", None, FirePolicy.make_policy(1, 0.6), 1)
     # Detection starting
     frame_info["start"] = 0
     time_info["start"] = time.time()
-    frame_info["end"] = detector.detect() # TODO: remove this line
+    frame_info["end"] = detector.render(reader_fire)  # TODO: remove this line
     # frame_info["end"] = detector.detect(frame_info["start"]) # TODO: un-comment this line
     time_info["end"] = time.time()
     detected = frame_info["end"] is not None

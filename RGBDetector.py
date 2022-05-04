@@ -25,7 +25,7 @@ class RGBDetector:
         while True:
             frame = self.read()
             if frame is None:
-                break
+                return -1
 
             fgMask = self.backSub.apply(frame)
 
@@ -41,16 +41,35 @@ class RGBDetector:
 
         return None
 
+<<<<<<< HEAD
+    def render(self):
+        self.read.reset()
+
+        id = 0
+        output_info = [] # ["currFrame", "areaRatio"]
+=======
     def render(self, read):
         writer = VideoWriterAdapter(read)
+>>>>>>> warmup
         while True:
             frame = read()
             if frame is None:
                 break
 
             fgMask = self.backSub.apply(frame)
+<<<<<<< HEAD
+            f, ratio = self.handle.apply_mask(frame.copy(), fgMask)
+            self.write(f)
+
+            output_info.append([id, ratio * 100])
+            id += 1
+
+        self.write.release()
+        np.savetxt("plane.txt", np.array(output_info, dtype=np.uint), delimiter=",", fmt="%d")
+=======
 
             f = self.handle.apply_mask(frame.copy(), fgMask)
             writer(f)
 
         writer.release()
+>>>>>>> warmup

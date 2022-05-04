@@ -441,7 +441,7 @@ class LoadImagesAndLabels(Dataset):
             # self.img_files = sorted([x for x in f if x.suffix[1:].lower() in IMG_FORMATS])  # pathlib
             assert self.im_files, f'{prefix}No images found'
         except Exception as e:
-            raise Exception(f'{prefix}Error loading data from {path}: {e}\nSee {HELP_URL}')
+            raise Exception(f'{prefix}Error loading og_data from {path}: {e}\nSee {HELP_URL}')
 
         # Check cache
         self.label_files = img2label_paths(self.im_files)  # labels
@@ -977,7 +977,7 @@ def dataset_stats(path='coco128.yaml', autodownload=False, verbose=False, profil
     Usage1: from utils.datasets import *; dataset_stats('coco128.yaml', autodownload=True)
     Usage2: from utils.datasets import *; dataset_stats('path/to/coco128_with_yaml.zip')
     Arguments
-        path:           Path to data.yaml or data.zip (with data.yaml inside data.zip)
+        path:           Path to og_data.yaml or og_data.zip (with og_data.yaml inside og_data.zip)
         autodownload:   Attempt to download dataset if not found locally
         verbose:        Print stats dictionary
     """
@@ -987,13 +987,13 @@ def dataset_stats(path='coco128.yaml', autodownload=False, verbose=False, profil
         return [[int(c), *(round(x, 4) for x in points)] for c, *points in labels]
 
     def unzip(path):
-        # Unzip data.zip TODO: CONSTRAINT: path/to/abc.zip MUST unzip to 'path/to/abc/'
-        if str(path).endswith('.zip'):  # path is data.zip
+        # Unzip og_data.zip TODO: CONSTRAINT: path/to/abc.zip MUST unzip to 'path/to/abc/'
+        if str(path).endswith('.zip'):  # path is og_data.zip
             assert Path(path).is_file(), f'Error unzipping {path}, file not found'
             ZipFile(path).extractall(path=path.parent)  # unzip
             dir = path.with_suffix('')  # dataset directory == zip name
             return True, str(dir), next(dir.rglob('*.yaml'))  # zipped, data_dir, yaml_path
-        else:  # path is data.yaml
+        else:  # path is og_data.yaml
             return False, None, path
 
     def hub_ops(f, max_dim=1920):
@@ -1016,7 +1016,7 @@ def dataset_stats(path='coco128.yaml', autodownload=False, verbose=False, profil
 
     zipped, data_dir, yaml_path = unzip(Path(path))
     with open(check_yaml(yaml_path), errors='ignore') as f:
-        data = yaml.safe_load(f)  # data dict
+        data = yaml.safe_load(f)  # og_data dict
         if zipped:
             data['path'] = data_dir  # TODO: should this be dir.resolve()?
     check_dataset(data, autodownload)  # download dataset if missing

@@ -135,7 +135,7 @@ largest `--batch-size` possible, or pass `--batch-size -1` for
 YOLOv5 [AutoBatch](https://github.com/ultralytics/yolov5/pull/5092). Batch sizes shown for V100-16GB.
 
 ```bash
-python train.py --data coco.yaml --cfg yolov5n.yaml --weights '' --batch-size 128
+python train.py --og_data coco.yaml --cfg yolov5n.yaml --weights '' --batch-size 128
                                        yolov5s                                64
                                        yolov5m                                40
                                        yolov5l                                24

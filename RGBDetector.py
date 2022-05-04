@@ -27,7 +27,7 @@ class RGBDetector:
         while True:
             frame = self.read()
             if frame is None:
-                break
+                return -1
 
             fgMask = self.backSub.apply(frame)
             fid_ = fid % len_frame_window
@@ -45,14 +45,20 @@ class RGBDetector:
 
     def render(self):
         self.read.reset()
+
+        id = 0
+        output_info = [] # ["currFrame", "areaRatio"]
         while True:
             frame = self.read()
             if frame is None:
                 break
 
             fgMask = self.backSub.apply(frame)
-
-            f = self.handle.apply_mask(frame.copy(), fgMask)
+            f, ratio = self.handle.apply_mask(frame.copy(), fgMask)
             self.write(f)
 
+            output_info.append([id, ratio * 100])
+            id += 1
+
         self.write.release()
+        np.savetxt("plane.txt", np.array(output_info, dtype=np.uint), delimiter=",", fmt="%d")

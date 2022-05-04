@@ -23,7 +23,7 @@ metric:
 parameters:
   # hyperparameters: set either min, max range or values list
   data:
-    value: "data/coco128.yaml"
+    value: "og_data/coco128.yaml"
   batch_size:
     values: [64]
   epochs:

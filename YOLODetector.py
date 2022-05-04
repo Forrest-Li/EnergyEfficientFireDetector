@@ -1,22 +1,23 @@
+import os
 import sys
+from pathlib import Path
 ROOT = '/content/yolov5'
 sys.path.append(ROOT)
 
 ROOT = Path(os.path.relpath(ROOT, Path.cwd()))
 
-import os
-from pathlib import Path
+import numpy as np
 
 import torch
 import torch.backends.cudnn as cudnn
 
-from yolov5.models.common import DetectMultiBackend
-from yolov5.utils.datasets import IMG_FORMATS, VID_FORMATS, LoadImages, LoadStreams
-from yolov5.utils.general import (LOGGER, check_file, check_img_size, check_imshow, check_requirements, colorstr, cv2,
+from models.common import DetectMultiBackend
+from utils.datasets import IMG_FORMATS, VID_FORMATS, LoadImages, LoadStreams
+from utils.general import (LOGGER, check_file, check_img_size, check_imshow, check_requirements, colorstr, cv2,
                            increment_path, non_max_suppression, print_args, scale_coords, strip_optimizer, xyxy2xywh)
-from yolov5.utils.plots import Annotator, colors, save_one_box
-from yolov5.utils.torch_utils import select_device, time_sync
-from yolov5.utils.augmentations import letterbox
+from utils.plots import Annotator, colors, save_one_box
+from utils.torch_utils import select_device, time_sync
+from utils.augmentations import letterbox
 
 
 class YOLODetector:
@@ -99,7 +100,7 @@ class YOLODetector:
         while True:
             img0 = self.read()
             if img0 is None:
-                break
+                return -1
 
             frame = self.frame_convert(img0)
             fid_ = fid % len_frame_window

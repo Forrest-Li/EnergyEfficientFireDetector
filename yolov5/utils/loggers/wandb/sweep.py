@@ -25,7 +25,7 @@ def sweep():
     opt.save_dir = str(increment_path(Path(opt.project) / opt.name, exist_ok=opt.exist_ok or opt.evolve))
     opt.epochs = hyp_dict.get("epochs")
     opt.nosave = True
-    opt.data = hyp_dict.get("data")
+    opt.data = hyp_dict.get("og_data")
     opt.weights = str(opt.weights)
     opt.cfg = str(opt.cfg)
     opt.data = str(opt.data)

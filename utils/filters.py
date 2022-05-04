@@ -13,6 +13,12 @@ def un_morph_filter(filter):
     return new_filter
 
 
+def OF_fire_filter(two_frames, mask):
+    img1, img2 = two_frames[0], two_frames[1]
+    img1_r = img1[:, :, 2]
+    img2_r = img2[:, :, 2]
+
+
 @un_morph_filter
 def fire_filter(img, mask):
     r_mean = np.mean(img[:, :, 2], dtype=np.float32)
@@ -29,10 +35,11 @@ def fire_filter(img, mask):
     b_g_1 = b_chn / g_1_chn
     where = np.where(((mask == 255)
                       & (r_chn > r_mean)
-                      & (r_chn > g_chn) & (g_chn > b_chn) \
+                      & (r_chn > g_chn) & (g_chn > b_chn)
                       & (g_r_1 <= 0.65)
-                      & (g_r_1 >= 0.25) & (b_r_1 >= 0.05) & (b_r_1 <= 0.45) & \
-                      (b_g_1 >= 0.2) & (b_g_1 <= 0.6)
+                      #& (g_r_1 >= 0.25)
+                      #& (b_r_1 >= 0.05) & (b_r_1 <= 0.45) #&
+                      #(b_g_1 >= 0.2) & (b_g_1 <= 0.6)
                       ))
 
     new_mask = np.zeros_like(mask)

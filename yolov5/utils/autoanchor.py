@@ -26,7 +26,7 @@ def check_anchor_order(m):
 
 
 def check_anchors(dataset, model, thr=4.0, imgsz=640):
-    # Check anchor fit to data, recompute if necessary
+    # Check anchor fit to og_data, recompute if necessary
     m = model.module.model[-1] if hasattr(model, 'module') else model.model[-1]  # Detect()
     shapes = imgsz * dataset.shapes / dataset.shapes.max(1, keepdims=True)
     scale = np.random.uniform(0.9, 1.1, size=(shapes.shape[0], 1))  # augment scale
@@ -65,11 +65,11 @@ def check_anchors(dataset, model, thr=4.0, imgsz=640):
         LOGGER.info(emojis(s))
 
 
-def kmean_anchors(dataset='./data/coco128.yaml', n=9, img_size=640, thr=4.0, gen=1000, verbose=True):
+def kmean_anchors(dataset='./og_data/coco128.yaml', n=9, img_size=640, thr=4.0, gen=1000, verbose=True):
     """ Creates kmeans-evolved anchors from training dataset
 
         Arguments:
-            dataset: path to data.yaml, or a loaded dataset
+            dataset: path to og_data.yaml, or a loaded dataset
             n: number of anchors
             img_size: image size used for training
             thr: anchor-label wh ratio threshold hyperparameter hyp['anchor_t'] used for training, default=4.0

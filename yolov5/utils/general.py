@@ -417,7 +417,7 @@ def check_file(file, suffix=''):
         return file
     else:  # search
         files = []
-        for d in 'data', 'models', 'utils':  # search directories
+        for d in 'og_data', 'models', 'utils':  # search directories
             files.extend(glob.glob(str(ROOT / d / '**' / file), recursive=True))  # find file
         assert len(files), f'File not found: {file}'  # assert file was found
         assert len(files) == 1, f"Multiple files match '{file}', specify exact path: {files}"  # assert unique
@@ -499,7 +499,7 @@ def url2file(url):
 
 
 def download(url, dir='.', unzip=True, delete=True, curl=False, threads=1, retry=3):
-    # Multi-threaded file download and unzip function, used in data.yaml for autodownload
+    # Multi-threaded file download and unzip function, used in og_data.yaml for autodownload
     def download_one(url, dir):
         # Download 1 file
         success = True
@@ -616,8 +616,8 @@ def labels_to_image_weights(labels, nc=80, class_weights=np.ones(80)):
 
 def coco80_to_coco91_class():  # converts 80-index (val2014) to 91-index (paper)
     # https://tech.amikelive.com/node-718/what-object-categories-labels-are-in-coco-dataset/
-    # a = np.loadtxt('data/coco.names', dtype='str', delimiter='\n')
-    # b = np.loadtxt('data/coco_paper.names', dtype='str', delimiter='\n')
+    # a = np.loadtxt('og_data/coco.names', dtype='str', delimiter='\n')
+    # b = np.loadtxt('og_data/coco_paper.names', dtype='str', delimiter='\n')
     # x1 = [list(a[i] == b).index(True) + 1 for i in range(80)]  # darknet to coco
     # x2 = [list(b[i] == a).index(True) if any(b[i] == a) else None for i in range(91)]  # coco to darknet
     x = [

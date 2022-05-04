@@ -299,7 +299,7 @@ class DetectMultiBackend(nn.Module):
         stride, names = 32, [f'class{i}' for i in range(1000)]  # assign defaults
         w = attempt_download(w)  # download if not local
         fp16 &= (pt or jit or onnx or engine) and device.type != 'cpu'  # FP16
-        if data:  # data.yaml path (optional)
+        if data:  # og_data.yaml path (optional)
             with open(data, errors='ignore') as f:
                 names = yaml.safe_load(f)['names']  # class names
 
@@ -344,7 +344,7 @@ class DetectMultiBackend(nn.Module):
             LOGGER.info(f'Loading {w} for TensorRT inference...')
             import tensorrt as trt  # https://developer.nvidia.com/nvidia-tensorrt-download
             check_version(trt.__version__, '7.0.0', hard=True)  # require tensorrt>=7.0.0
-            Binding = namedtuple('Binding', ('name', 'dtype', 'shape', 'data', 'ptr'))
+            Binding = namedtuple('Binding', ('name', 'dtype', 'shape', 'og_data', 'ptr'))
             logger = trt.Logger(trt.Logger.INFO)
             with open(w, 'rb') as f, trt.Runtime(logger) as runtime:
                 model = runtime.deserialize_cuda_engine(f.read())
@@ -522,7 +522,7 @@ class AutoShape(nn.Module):
     @torch.no_grad()
     def forward(self, imgs, size=640, augment=False, profile=False):
         # Inference from various sources. For height=640, width=1280, RGB images example inputs are:
-        #   file:       imgs = 'data/images/zidane.jpg'  # str or PosixPath
+        #   file:       imgs = 'og_data/images/zidane.jpg'  # str or PosixPath
         #   URI:             = 'https://ultralytics.com/images/zidane.jpg'
         #   OpenCV:          = cv2.imread('image.jpg')[:,:,::-1]  # HWC BGR to RGB x(640,1280,3)
         #   PIL:             = Image.open('image.jpg') or ImageGrab.grab()  # HWC x(640,1280,3)

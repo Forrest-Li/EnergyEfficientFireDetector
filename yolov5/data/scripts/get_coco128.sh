@@ -1,7 +1,7 @@
 #!/bin/bash
 # YOLOv5 🚀 by Ultralytics, GPL-3.0 license
 # Download COCO128 dataset https://www.kaggle.com/ultralytics/coco128 (first 128 images from COCO train2017)
-# Example usage: bash data/scripts/get_coco128.sh
+# Example usage: bash og_data/scripts/get_coco128.sh
 # parent
 # ├── yolov5
 # └── datasets

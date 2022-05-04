@@ -3,7 +3,7 @@
 Validate a trained YOLOv5 model accuracy on a custom dataset
 
 Usage:
-    $ python path/to/val.py --weights yolov5s.pt --data coco128.yaml --img 640
+    $ python path/to/val.py --weights yolov5s.pt --og_data coco128.yaml --img 640
 
 Usage - formats:
     $ python path/to/val.py --weights yolov5s.pt                 # PyTorch
@@ -162,10 +162,10 @@ def run(
 
     # Dataloader
     if not training:
-        if pt and not single_cls:  # check --weights are trained on --data
+        if pt and not single_cls:  # check --weights are trained on --og_data
             ncm = model.model.yaml['nc']
-            assert ncm == nc, f'{weights[0]} ({ncm} classes) trained on different --data than what you passed ({nc} ' \
-                              f'classes). Pass correct combination of --weights and --data that are trained together.'
+            assert ncm == nc, f'{weights[0]} ({ncm} classes) trained on different --og_data than what you passed ({nc} ' \
+                              f'classes). Pass correct combination of --weights and --og_data that are trained together.'
         model.warmup(imgsz=(1 if pt else batch_size, 3, imgsz, imgsz))  # warmup
         pad = 0.0 if task in ('speed', 'benchmark') else 0.5
         rect = False if task == 'benchmark' else pt  # square inference for benchmarks
@@ -333,7 +333,7 @@ def run(
 
 def parse_opt():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data', type=str, default=ROOT / 'data/coco128.yaml', help='dataset.yaml path')
+    parser.add_argument('--og_data', type=str, default=ROOT / 'og_data/coco128.yaml', help='dataset.yaml path')
     parser.add_argument('--weights', nargs='+', type=str, default=ROOT / 'yolov5s.pt', help='model.pt path(s)')
     parser.add_argument('--batch-size', type=int, default=32, help='batch size')
     parser.add_argument('--imgsz', '--img', '--img-size', type=int, default=640, help='inference size (pixels)')
@@ -374,13 +374,13 @@ def main(opt):
         weights = opt.weights if isinstance(opt.weights, list) else [opt.weights]
         opt.half = True  # FP16 for fastest results
         if opt.task == 'speed':  # speed benchmarks
-            # python val.py --task speed --data coco.yaml --batch 1 --weights yolov5n.pt yolov5s.pt...
+            # python val.py --task speed --og_data coco.yaml --batch 1 --weights yolov5n.pt yolov5s.pt...
             opt.conf_thres, opt.iou_thres, opt.save_json = 0.25, 0.45, False
             for opt.weights in weights:
                 run(**vars(opt), plots=False)
 
         elif opt.task == 'study':  # speed vs mAP benchmarks
-            # python val.py --task study --data coco.yaml --iou 0.7 --weights yolov5n.pt yolov5s.pt...
+            # python val.py --task study --og_data coco.yaml --iou 0.7 --weights yolov5n.pt yolov5s.pt...
             for opt.weights in weights:
                 f = f'study_{Path(opt.data).stem}_{Path(opt.weights).stem}.txt'  # filename to save to
                 x, y = list(range(256, 1536 + 128, 128)), []  # x axis (image sizes), y axis

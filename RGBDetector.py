@@ -1,11 +1,9 @@
 import numpy as np
 import cv2 as cv
-
+from my_utils.video_adapters import VideoWriterAdapter
 
 class RGBDetector:
-    def __init__(self, frame_reader, frame_writer, fire_handle, thres):
-        self.read = frame_reader
-        self.write = frame_writer
+    def __init__(self, fire_handle, policy_gen):
         self.backSub = cv.bgsegm.createBackgroundSubtractorCNT()
         self.handle = fire_handle
         self.frame_window = [0 for i in range(int(self.read.fps() / 2))]
@@ -30,30 +28,36 @@ class RGBDetector:
                 return -1
 
             fgMask = self.backSub.apply(frame)
-            fid_ = fid % len_frame_window
-            num_fire_frames -= self.frame_window[fid_]
+
             has_fire = self.handle.has_fire(frame, fgMask)
             if has_fire:
-                print("has fire:", fid)
-            self.frame_window[fid_] = int(has_fire)
-            num_fire_frames += self.frame_window[fid_]
+                print("has fire", fid)
+            fire_frame = policy.update_frame_record(fid, has_fire)
+            if fire_frame > -1:
+                print("fire detected at frame", fire_frame)
+                return fire_frame
 
             fid += 1
 
-            if num_fire_frames >= self.thres:
-                return fid
+        return None
 
+<<<<<<< HEAD
     def render(self):
         self.read.reset()
 
         id = 0
         output_info = [] # ["currFrame", "areaRatio"]
+=======
+    def render(self, read):
+        writer = VideoWriterAdapter(read)
+>>>>>>> warmup
         while True:
-            frame = self.read()
+            frame = read()
             if frame is None:
                 break
 
             fgMask = self.backSub.apply(frame)
+<<<<<<< HEAD
             f, ratio = self.handle.apply_mask(frame.copy(), fgMask)
             self.write(f)
 
@@ -62,3 +66,10 @@ class RGBDetector:
 
         self.write.release()
         np.savetxt("plane.txt", np.array(output_info, dtype=np.uint), delimiter=",", fmt="%d")
+=======
+
+            f = self.handle.apply_mask(frame.copy(), fgMask)
+            writer(f)
+
+        writer.release()
+>>>>>>> warmup

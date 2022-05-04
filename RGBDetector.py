@@ -1,3 +1,4 @@
+import numpy as np
 import cv2 as cv
 from my_utils.video_adapters import VideoWriterAdapter
 
@@ -5,16 +6,24 @@ class RGBDetector:
     def __init__(self, fire_handle, policy_gen):
         self.backSub = cv.bgsegm.createBackgroundSubtractorCNT()
         self.handle = fire_handle
-        self.policy_gen = policy_gen
+        self.frame_window = [0 for i in range(int(self.read.fps() / 2))]
+        assert thres >= 0. and thres <= 1.
+        self.thres = int(thres * len(self.frame_window))
+        print(f"source fps: {self.read.fps()}, threshold: {self.thres} / {len(self.frame_window)}")
 
-    def detect(self, read, step=-1) -> int:
-        # print("rgb")
-        policy = self.policy_gen(read.fps(), step)
-        fid = read.frame_id()
+    def warmup(self):
+        frames = np.ones((50, 720, 1080, 3), dtype=np.uint8)
+        for frame in frames:
+            fgMask = self.backSub.apply(frame)
+            has_fire = self.handle.has_fire(frame, fgMask)
 
-        while step != 0:
-            step -= 1
-            frame = read()
+    def detect(self) -> int:
+        fid = 0
+        len_frame_window = len(self.frame_window)
+        num_fire_frames = 0
+        self.read.reset()
+        while True:
+            frame = self.read()
             if frame is None:
                 break
 

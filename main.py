@@ -22,10 +22,12 @@ def main():
     time_info = {"start": -1, "end": -1, "duration": -1}
     fps = -1
     reader_fire = CachedVideoCaptureAdapter("fire.mp4")
-    # detector = RGBDetector(FireHandle(filter_jit, 0.01), FirePolicy.make_policy(1, 0.6))
-    detector = YOLODetector(
-        "./weights/best.pt", None, FirePolicy.make_policy(1, 0.6), 1)
+    detector = RGBDetector(reader_fire, VideoWriterAdapter(reader_fire),
+                           FireHandle(filter_jit, 0.00000001), 0.6)
+    #detector = YOLODetector(
+    #    "./weights/best.pt", None, FirePolicy.make_policy(1, 0.6), 1)
     # Detection starting
+    detector.warmup()
     frame_info["start"] = 0
     time_info["start"] = time.time()
     frame_info["end"] = detector.render(reader_fire)  # TODO: remove this line

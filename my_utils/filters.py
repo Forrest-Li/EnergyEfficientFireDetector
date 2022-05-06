@@ -37,14 +37,9 @@ def fire_filter(img, mask):
                       & (r_chn > r_mean)
                       & (r_chn > g_chn) & (g_chn > b_chn)
                       & (g_r_1 <= 0.65)
-<<<<<<< HEAD:utils/filters.py
                       #& (g_r_1 >= 0.25)
                       #& (b_r_1 >= 0.05) & (b_r_1 <= 0.45) #&
                       #(b_g_1 >= 0.2) & (b_g_1 <= 0.6)
-=======
-                      & (g_r_1 >= 0.25) & (b_r_1 >= 0.05) & (b_r_1 <= 0.45) &
-                      (b_g_1 >= 0.2) & (b_g_1 <= 0.6)
->>>>>>> warmup:my_utils/filters.py
                       ))
 
     new_mask = np.zeros_like(mask)
